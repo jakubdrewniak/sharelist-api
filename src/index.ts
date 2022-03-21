@@ -1,8 +1,10 @@
+import "dotenv/config";
 import express from "express";
 import { Server } from "socket.io";
 import http from "http";
 import cors from "cors";
 import { catalogsRouter } from "./routers/catalogs";
+import { connectToDB } from "./db/mongoose";
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -38,6 +40,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
+connectToDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
+  });
 });

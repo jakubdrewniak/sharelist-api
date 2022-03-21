@@ -4,13 +4,16 @@
   "main": "build/src/index.js",
   "scripts": {
     "build": "tsc --project ./",
-    "start": "npm run build && node build/src/index.js",
-    "dev": "tsc-watch --onSuccess \"node .\""
+    "start": "npm run build && node --require dotenv/config build/src/index.js",
+    "dev": "tsc-watch --onSuccess \"node --require dotenv/config .\""
   },
   "license": "ISC",
   "homepage": "https://github.com/jakubdrewniak/sharelist-api#readme",
   "dependencies": {
+    "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "mongodb": "^4.4.1",
+    "mongoose": "^6.2.7",
     "socket.io": "^4.4.1"
   },
   "devDependencies": {
