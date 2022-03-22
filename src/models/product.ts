@@ -1,20 +1,13 @@
-import { Schema, model } from "mongoose";
-import { CATALOG_REF, PRODUCT_REF } from "./refs";
+import { Schema } from "mongoose";
 
-interface IProduct {
+export interface IProduct {
   name: string;
-  catalog: Schema.Types.ObjectId;
   quantity?: number;
+  unit?: string;
 }
 
-const productSchema = new Schema<IProduct>({
+export const productSchema = new Schema<IProduct>({
   name: { type: String, required: true, trim: true },
-  catalog: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: CATALOG_REF
-  },
   quantity: { type: Number, required: false },
+  unit: { type: String, required: false },
 });
-
-export const Product = model<IProduct>(PRODUCT_REF, productSchema);

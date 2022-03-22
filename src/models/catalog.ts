@@ -1,8 +1,10 @@
 import { Schema, model } from "mongoose";
-import { CATALOG_REF, PRODUCT_REF } from "./refs";
+import { IProduct, productSchema } from "./product";
+import { CATALOG_REF } from "./refs";
 
 interface ICatalog {
   name: string;
+  products: IProduct[];
 }
 
 const catalogSchema = new Schema<ICatalog>(
@@ -12,14 +14,9 @@ const catalogSchema = new Schema<ICatalog>(
       required: true,
       trim: true,
     },
+    products: [productSchema],
   },
   { timestamps: true }
 );
-
-catalogSchema.virtual('products', {
-  ref: PRODUCT_REF,
-  localField: '_id',
-  foreignField: 'catalog'
-})
 
 export const Catalog = model<ICatalog>(CATALOG_REF, catalogSchema);
