@@ -1,15 +1,11 @@
 import { Router } from "express";
+import { Catalog } from "../models/catalog";
 
 const router = Router();
 
 router.get("/catalogs", async (req, res) => {
-  console.count("get catalogs");
-  res.send([
-    { name: "item1" },
-    { name: "item2" },
-    { name: "item3" },
-    { name: "item4" },
-  ]);
+  const catalogs = await Catalog.find()
+  return res.send(catalogs)
 });
 
 export { router as catalogsRouter };
