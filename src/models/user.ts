@@ -1,15 +1,30 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Model } from "mongoose";
 import isEmail from "validator/lib/isEmail";
 import { USER_REF } from "./refs";
-import { hash } from "bcryptjs";
+import { hash, compare } from "bcryptjs";
+import * as jwt from "jsonwebtoken";
 
 interface IUser {
+  _id: string;
   name: string;
   email: string;
   password: string;
+
+  tokens: [{ token: string }];
 }
 
-const userSchema = new Schema<IUser>({
+interface IUserDocument extends IUser, Document {
+  generateAuthToken: () => Promise<string>;
+}
+
+interface IUserModel extends Model<IUserDocument> {
+  findByCredentials: (
+    email: string,
+    password: string
+  ) => Promise<IUserDocument>;
+}
+
+const userSchema = new Schema<IUserDocument>({
   name: {
     type: String,
     required: true,
@@ -17,6 +32,7 @@ const userSchema = new Schema<IUser>({
   },
   email: {
     type: String,
+    unique: true,
     required: true,
     trim: true,
     lowercase: true,
@@ -37,6 +53,14 @@ const userSchema = new Schema<IUser>({
       }
     },
   },
+  tokens: [
+    {
+      token: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {
@@ -49,4 +73,32 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-export const User = model<IUser>(USER_REF, userSchema);
+userSchema.statics.findByCredentials = async (
+  email: string,
+  password: string
+) => {
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const passwordIsMatching = await compare(password, user.password);
+    if (passwordIsMatching) return user;
+  }
+
+  throw new Error("Invalid credentials!");
+};
+
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign(
+    { _id: user._id.toString() },
+    process.env.JWT_SECRET as string
+  );
+
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+
+  return token;
+};
+
+const User = model<IUserDocument, IUserModel>(USER_REF, userSchema);
+export default User;

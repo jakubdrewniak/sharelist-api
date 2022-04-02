@@ -19,4 +19,5 @@ const catalogSchema = new Schema<ICatalog>(
   { timestamps: true }
 );
 
-export const Catalog = model<ICatalog>(CATALOG_REF, catalogSchema);
+const Catalog = model<ICatalog>(CATALOG_REF, catalogSchema);
+export default Catalog;

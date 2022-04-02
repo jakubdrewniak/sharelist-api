@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Catalog } from "../models/catalog";
+import Catalog from "../models/catalog";
 
 const router = Router();
 
@@ -15,7 +15,7 @@ router.post("/catalogs", async (req, res) => {
     await catalog.save();
     res.status(201).send(catalog._id);
   } catch (e) {
-    res.status(400).send(e)
+    res.status(400).send(e);
   }
 });
 

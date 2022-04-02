@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { Catalog } from "./models/catalog";
+import Catalog from "./models/catalog";
 import http from "http";
 
 function initWebsocket(server: http.Server) {
