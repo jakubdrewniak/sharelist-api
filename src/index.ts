@@ -5,6 +5,7 @@ import cors from "cors";
 import { catalogsRouter } from "./routers/catalogs";
 import { connectToDB } from "./db/mongoose";
 import { initWebsocket } from "./websocket";
+import { usersRouter } from "./routers/user";
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -18,6 +19,7 @@ app.use(
   })
 );
 app.use(catalogsRouter);
+app.use(usersRouter)
 
 initWebsocket(server);
 
