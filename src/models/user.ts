@@ -86,6 +86,13 @@ userSchema.statics.findByCredentials = async (
   throw new Error("Invalid credentials!");
 };
 
+userSchema.methods.toJSON = function () {
+  const user = this as IUserDocument;
+  const { _id, name, email } = user.toObject();
+
+  return { _id, name, email };
+};
+
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = jwt.sign(
