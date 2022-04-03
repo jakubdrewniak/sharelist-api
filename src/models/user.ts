@@ -1,8 +1,9 @@
 import { Schema, model, Model, Document } from "mongoose";
 import isEmail from "validator/lib/isEmail";
-import { USER_REF } from "./refs";
+import { CATALOG_REF, USER_REF } from "./refs";
 import { hash, compare } from "bcryptjs";
 import * as jwt from "jsonwebtoken";
+import { ICatalogDocument } from "./catalog";
 
 interface IUser {
   name: string;
@@ -14,6 +15,7 @@ interface IUser {
 
 export interface IUserDocument extends IUser, Document {
   generateAuthToken: () => Promise<string>;
+  catalogs?: ICatalogDocument;
 }
 
 export interface IUserModel extends Model<IUserDocument> {
@@ -60,6 +62,12 @@ const userSchema = new Schema<IUserDocument>({
       },
     },
   ],
+});
+
+userSchema.virtual("catalogs", {
+  ref: CATALOG_REF,
+  localField: "_id",
+  foreignField: "creator",
 });
 
 userSchema.pre("save", async function (next) {

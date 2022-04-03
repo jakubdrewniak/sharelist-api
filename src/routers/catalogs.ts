@@ -5,8 +5,16 @@ import Catalog from "../models/catalog";
 const router = Router();
 
 router.get("/catalogs", auth, async (req, res) => {
-  const catalogs = await Catalog.find();
-  return res.send(catalogs);
+  if (!req.user) throw new Error();
+
+  try {
+    await req.user.populate({
+      path: "catalogs",
+    });
+    res.send(req.user.catalogs);
+  } catch (e) {
+    res.status(500).send();
+  }
 });
 
 router.post("/catalogs", auth, async (req, res) => {

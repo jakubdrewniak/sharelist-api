@@ -1,14 +1,16 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types, Document } from "mongoose";
 import { IProduct, productSchema } from "./product";
 import { CATALOG_REF, USER_REF } from "./refs";
 
-interface ICatalog {
+export interface ICatalog {
   name: string;
   products: IProduct[];
   creator: Types.ObjectId;
 }
 
-const catalogSchema = new Schema<ICatalog>(
+export interface ICatalogDocument extends ICatalog, Document {}
+
+const catalogSchema = new Schema<ICatalogDocument>(
   {
     name: {
       type: String,
@@ -25,5 +27,12 @@ const catalogSchema = new Schema<ICatalog>(
   { timestamps: true }
 );
 
-const Catalog = model<ICatalog>(CATALOG_REF, catalogSchema);
+catalogSchema.methods.toJSON = function () {
+  const catalog = this as ICatalogDocument;
+  const { _id, name, products, creator } = catalog.toObject();
+
+  return { _id, name, products };
+};
+
+const Catalog = model<ICatalogDocument>(CATALOG_REF, catalogSchema);
 export default Catalog;
