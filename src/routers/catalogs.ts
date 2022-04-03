@@ -1,9 +1,10 @@
 import { Router } from "express";
+import auth from "../middleware/auth";
 import Catalog from "../models/catalog";
 
 const router = Router();
 
-router.get("/catalogs", async (req, res) => {
+router.get("/catalogs", auth, async (req, res) => {
   const catalogs = await Catalog.find();
   return res.send(catalogs);
 });
