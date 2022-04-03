@@ -9,8 +9,10 @@ router.get("/catalogs", auth, async (req, res) => {
   return res.send(catalogs);
 });
 
-router.post("/catalogs", async (req, res) => {
-  const catalog = new Catalog({ ...req.body });
+router.post("/catalogs", auth, async (req, res) => {
+  if (!req.user) throw new Error();
+
+  const catalog = new Catalog({ ...req.body, creator: req.user._id });
 
   try {
     await catalog.save();
