@@ -1,23 +1,22 @@
-import { Schema, model, Model } from "mongoose";
+import { Schema, model, Model, Document } from "mongoose";
 import isEmail from "validator/lib/isEmail";
 import { USER_REF } from "./refs";
 import { hash, compare } from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 
 interface IUser {
-  _id: string;
   name: string;
   email: string;
   password: string;
 
-  tokens: [{ token: string }];
+  tokens: { token: string }[];
 }
 
 export interface IUserDocument extends IUser, Document {
   generateAuthToken: () => Promise<string>;
 }
 
-interface IUserModel extends Model<IUserDocument> {
+export interface IUserModel extends Model<IUserDocument> {
   findByCredentials: (
     email: string,
     password: string

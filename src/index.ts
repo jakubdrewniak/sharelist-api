@@ -6,6 +6,7 @@ import { catalogsRouter } from "./routers/catalogs";
 import { connectToDB } from "./db/mongoose";
 import { initWebsocket } from "./websocket";
 import { usersRouter } from "./routers/user";
+import { authRouter } from "./routers/auth";
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -19,7 +20,8 @@ app.use(
   })
 );
 app.use(catalogsRouter);
-app.use(usersRouter)
+app.use(usersRouter);
+app.use(authRouter);
 
 initWebsocket(server);
 
